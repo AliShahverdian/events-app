@@ -1,9 +1,10 @@
-import { View, Image, Text } from "react-native";
+import { View, Text } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Feather from "@expo/vector-icons/Feather";
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 import { ADD_BOOKMARK, REMOVE_BOOKMARK } from "@/graphql/mutations";
+import { GET_BOOKMARKS } from "@/graphql/queries";
 
 type Event = {
   id: string;
@@ -17,10 +18,11 @@ const AppCard = ({ cardInfo }: { cardInfo: Event }) => {
   const [bookmarked, setBookMarked] = useState<boolean>(false);
   const [addBookmark] = useMutation(ADD_BOOKMARK);
   const [removeBookmark] = useMutation(REMOVE_BOOKMARK);
+  const { data: bookmarks } = useQuery(GET_BOOKMARKS);
 
   const bookmarkIcon = async (id: string) => {
     setBookMarked(!bookmarked);
-    if (!bookmarked) {
+    if (bookmarked) {
       try {
         const data = await removeBookmark({ variables: { eventId: id } });
         console.log("Removed Bookmark:", data);
@@ -36,6 +38,16 @@ const AppCard = ({ cardInfo }: { cardInfo: Event }) => {
       }
     }
   };
+  useEffect(() => {
+    const item = bookmarks?.getBookmarks.find(
+      (el: Event) => el.id === cardInfo.id
+    );
+    if (!item) {
+      return;
+    } else {
+      setBookMarked(true);
+    }
+  }, [bookmarks]);
 
   return (
     <View

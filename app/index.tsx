@@ -8,11 +8,11 @@ const MainPage = () => {
   const { data, loading, error } = useQuery(GET_EVENTS);
   console.log("data", error);
 
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
+  if (loading) return <Text style={{ margin: 16 }}>Loading...</Text>;
+  if (error) return <Text style={{ margin: 16 }}>Error: {error.message}</Text>;
 
   return (
-    <>
+    <View style={{ margin: 16 }}>
       <Text
         style={{
           fontSize: 24,
@@ -31,7 +31,7 @@ const MainPage = () => {
           keyExtractor={(item) => item.id}
         />
       </View>
-    </>
+    </View>
   );
 };
 export default MainPage;
